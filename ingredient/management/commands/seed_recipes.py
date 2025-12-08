@@ -197,14 +197,11 @@ class Command(BaseCommand):
         
         if created:
             recipe3_ingredients = [
-                (ingredients['Chapati Flour'], 3, 'cup', ''),
-                (ingredients['Water'], 1, 'cup', 'approximately'),
-                (ingredients['Oil'], 2, 'tbsp', ''),
-                (ingredients['Salt'], 0.5, 'tsp', ''),
+                (ingredients.get('Chapati Flour'), 3, 'cup', ''),
+                # Water is omitted from ingredients list (use approximate water when cooking)
+                (ingredients.get('Oil'), 2, 'tbsp', ''),
+                (ingredients.get('Salt'), 0.5, 'tsp', ''),
             ]
-            
-            # Note: Water is not in our ingredient list, so skip it
-            recipe3_ingredients = [x for x in recipe3_ingredients if x[1] != '1']
             
             for ingredient, amount, unit, notes in recipe3_ingredients:
                 try:
