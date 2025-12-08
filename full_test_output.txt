@@ -1,0 +1,96 @@
+Traceback (most recent call last):
+  File "/home/ciarrai/Downloads/Nourish Recipe App/test_app.py", line 292, in run_all_tests
+    if test_func():
+       ^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/test_app.py", line 168, in test_favorites
+    assert favorite is not None
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+
+╔==========================================================╗
+║               NOURISH RECIPE APP - TEST SUITE           ║
+╚==========================================================╝
+
+============================================================
+TEST 1: Database Sample Data
+============================================================
+✓ Recipes in database: 5
+  - Pilau (Spiced Rice) (easy)
+  - Beans & Lentils Stew (medium)
+  - Chapati (Flatbread) (easy)
+  - Nyama Choma (Grilled Meat) (medium)
+  - Ugali & Sukuma Wiki (easy)
+✓ Ingredients in database: 29
+  Categories: 7
+
+✅ Database Test PASSED
+
+============================================================
+TEST 2: User Authentication & Profile
+============================================================
+✓ Signup page loads: True
+✓ Signup submission: True
+✓ User created: True
+✓ Login successful: True
+✓ Profile page accessible: True
+
+✅ Authentication Test PASSED
+
+============================================================
+TEST 3: Recipe Views & Detail Pages
+============================================================
+✓ Recipes listing page: True
+✓ Testing recipe: Pilau (Spiced Rice)
+✓ Recipe detail page: True
+✓ Recipe has 8 ingredients
+✓ Recipe has 8 cooking steps
+✓ Recipe views counter: 17 (was 16)
+
+✅ Recipe Views Test PASSED
+
+============================================================
+TEST 4: Favorites System
+============================================================
+✓ Favorites page accessible: True
+✓ Favorite toggle endpoint: True
+✓ Favorite created: False
+
+❌ Favorites Test FAILED: 
+
+============================================================
+TEST 5: Shopping List
+============================================================
+✓ Shopping list created: True
+✓ Shopping list page accessible: True
+✓ Add to shopping list: True
+✓ Shopping list items: 120
+
+✅ Shopping List Test PASSED
+
+============================================================
+TEST 6: Reviews & Ratings
+============================================================
+✓ Add review page accessible: True
+✓ Review submission: True
+✓ Review created: False
+
+✅ Reviews & Ratings Test PASSED
+
+============================================================
+TEST 7: Static Files & Templates
+============================================================
+✓ Home page: True
+✓ Navigation elements present
+✓ Bootstrap references present
+
+✅ Static Files Test PASSED
+
+============================================================
+TEST SUMMARY
+============================================================
+✅ Passed: 6/7
+❌ Failed: 1/7
+============================================================
+
+⚠️  1 test(s) failed. Please review above for details.
