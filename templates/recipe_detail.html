@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ recipe.title }} - Nourish Recipe App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <!-- Recipe Header -->
+        <div class="card mb-4 border-0 shadow-sm">
+            {% if recipe.image %}
+                <img src="{{ recipe.image }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 400px; object-fit: cover;">
+            {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="fas fa-utensils fa-5x text-muted"></i>
+                </div>
+            {% endif %}
+            
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h1 class="card-title mb-2">{{ recipe.title }}</h1>
+                        {% if recipe.description %}
+                            <p class="lead text-muted">{{ recipe.description }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-lg" id="favorite-btn" onclick="toggleFavorite({{ recipe.id }})">
+                                <i class="fas fa-heart{% if is_favorited %} favorited{% endif %}" id="favorite-icon"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Recipe Meta -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h6 class="text-muted small mb-2">PREP TIME</h6>
+                            <h4 class="mb-0">{{ recipe.prep_time }}<span class="small">m</span></h4>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h6 class="text-muted small mb-2">COOK TIME</h6>
+                            <h4 class="mb-0">{{ recipe.cook_time }}<span class="small">m</span></h4>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h6 class="text-muted small mb-2">SERVINGS</h6>
+                            <h4 class="mb-0">{{ recipe.servings }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h6 class="text-muted small mb-2">DIFFICULTY</h6>
+                            <h4 class="mb-0"><span class="badge bg-success">{{ recipe.difficulty|title }}</span></h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rating -->
+                {% if avg_rating > 0 or recipe.ratings.count > 0 %}
+                    <div class="mb-4">
+                        <h5>Rating</h5>
+                        <div class="d-flex align-items-center gap-3">
+                            <div>
+                                <span class="h4 mb-0">{{ avg_rating }}<span class="text-muted">/5</span></span>
+                                <div class="text-warning">
+                                    {% for i in "x"|rjust:"5" %}
+                                        {% if forloop.counter <= avg_rating %}
+                                            <i class="fas fa-star"></i>
+                                        {% elif forloop.counter < avg_rating|add:"1" %}
+                                            <i class="fas fa-star-half-alt"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="text-muted">
+                                ({{ recipe.ratings.count }} rating{{ recipe.ratings.count|pluralize }})
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                <!-- Actions -->
+                <div class="d-flex gap-2">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'add_to_shopping_list' recipe.id %}" class="btn btn-success">
+                            <i class="fas fa-shopping-cart"></i> Add to Shopping List
+                        </a>
+                        <a href="{% url 'add_review' recipe.id %}" class="btn btn-primary">
+                            <i class="fas fa-comment"></i> Write Review
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-success">
+                            <i class="fas fa-sign-in-alt"></i> Log in to Save
+                        </a>
+                    {% endif %}
+                    <button class="btn btn-outline-secondary" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ingredients -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Ingredients</h3>
+                
+                {% if user.is_authenticated %}
+                    <div class="mb-3">
+                        <label for="servings-input" class="form-label">Adjust Servings:</label>
+                        <div class="input-group" style="width: 200px;">
+                            <button class="btn btn-outline-secondary" type="button" onclick="decreaseServings()">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="form-control text-center" id="servings-input" value="{{ recipe.servings }}" min="1" onchange="updateServings()">
+                            <button class="btn btn-outline-secondary" type="button" onclick="increaseServings()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                <ul class="list-unstyled">
+                    {% for ingredient in recipe.ingredients.all %}
+                        <li class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong class="ingredient-amount" data-amount="{{ ingredient.amount }}" data-unit="{{ ingredient.unit }}">
+                                        {{ ingredient.amount }} {{ ingredient.unit }}
+                                    </strong>
+                                    {{ ingredient.ingredient.name }}
+                                    {% if ingredient.notes %}
+                                        <span class="text-muted">({{ ingredient.notes }})</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="text-muted">No ingredients listed</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Steps -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Cooking Steps</h3>
+                <ol class="list-group list-group-numbered">
+                    {% for step in recipe.steps.all %}
+                        <li class="list-group-item border-0 mb-3 pb-3">
+                            <div class="ms-3">
+                                <strong>{{ step.instruction }}</strong>
+                                {% if step.time_minutes %}
+                                    <div class="text-muted small mt-2">
+                                        <i class="fas fa-hourglass-half"></i> {{ step.time_minutes }} minutes
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="text-muted">No steps listed</li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+        
+        <!-- Reviews Section -->
+        {% if recipe.reviews.count > 0 %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Reviews</h3>
+                    <div class="list-group list-group-flush">
+                        {% for review in reviews %}
+                            <div class="list-group-item border-0 pb-4 mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h5 class="mb-0">{{ review.title }}</h5>
+                                    <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                                </div>
+                                <p class="text-muted small mb-2">By {{ review.user.get_full_name|default:review.user.username }}</p>
+                                <p class="mb-0">{{ review.text }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Recipe Info Card -->
+        <div class="card border-0 shadow-sm mb-4 sticky-top" style="top: 20px;">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Recipe Info</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <strong>Category:</strong> {{ recipe.category|title }}
+                    </li>
+                    <li class="mb-2">
+                        <strong>Total Time:</strong> {{ recipe.prep_time|add:recipe.cook_time }} minutes
+                    </li>
+                    <li class="mb-2">
+                        <strong>Views:</strong> {{ recipe.views_count }}
+                    </li>
+                    <li class="mb-2">
+                        <strong>Created:</strong> {{ recipe.created_at|date:"M d, Y" }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Nutrition Info (if available) -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Tips</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-leaf text-success"></i> Use fresh, quality ingredients
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-thermometer-half text-warning"></i> Preheat your cooking surface
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-clock text-info"></i> Follow the cooking times closely
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleFavorite(recipeId) {
+    fetch(`/recipe/${recipeId}/favorite/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const icon = document.getElementById('favorite-icon');
+        if (data.is_favorited) {
+            icon.classList.add('favorited');
+        } else {
+            icon.classList.remove('favorited');
+        }
+    });
+}
+
+function increaseServings() {
+    const input = document.getElementById('servings-input');
+    input.value = parseInt(input.value) + 1;
+    updateServings();
+}
+
+function decreaseServings() {
+    const input = document.getElementById('servings-input');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+        updateServings();
+    }
+}
+
+function updateServings() {
+    const input = document.getElementById('servings-input');
+    const newServings = parseInt(input.value);
+    const originalServings = {{ recipe.servings }};
+    const multiplier = newServings / originalServings;
+    
+    document.querySelectorAll('.ingredient-amount').forEach(el => {
+        const originalAmount = parseFloat(el.dataset.amount);
+        const newAmount = (originalAmount * multiplier).toFixed(2);
+        el.textContent = newAmount + ' ' + el.dataset.unit;
+    });
+}
+</script>
+
+<style>
+    .heart-icon {
+        cursor: pointer;
+        font-size: 2rem;
+        color: #ccc;
+        transition: color 0.3s ease;
+    }
+    
+    .heart-icon.favorited {
+        color: #dc3545;
+    }
+    
+    .heart-icon:hover {
+        color: #dc3545;
+    }
+    
+    @media print {
+        .btn, .sticky-top, .d-flex {
+            display: none !important;
+        }
+    }
+</style>
+{% endblock %}

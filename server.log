@@ -1,0 +1,175 @@
+[08/Dec/2025 09:27:37] "HEAD /recipes/ HTTP/1.1" 200 15899
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 08, 2025 - 09:26:38
+Django version 2.1, using settings 'django_project.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+Exception ignored in thread started by: <function check_errors.<locals>.wrapper at 0x76c1c8dea0c0>
+Traceback (most recent call last):
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 225, in wrapper
+    fn(*args, **kwargs)
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 117, in inner_run
+    self.check(display_num_errors=True)
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/management/base.py", line 376, in check
+    all_issues = self._run_checks(
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/management/base.py", line 366, in _run_checks
+    return checks.run_checks(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/checks/registry.py", line 71, in run_checks
+    new_errors = check(app_configs=app_configs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 40, in check_url_namespaces_unique
+    all_namespaces = _load_all_namespaces(resolver)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 57, in _load_all_namespaces
+    url_patterns = getattr(resolver, 'url_patterns', [])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/utils/functional.py", line 37, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 533, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/utils/functional.py", line 37, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 526, in urlconf_module
+    return import_module(self.urlconf_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/ciarrai/Downloads/Nourish Recipe App/django_project/urls.py", line 18, in <module>
+    from ingredient.views import (
+  File "/home/ciarrai/Downloads/Nourish Recipe App/ingredient/views.py", line 4, in <module>
+    from .forms import SignupForm, LoginForm, UserProfileForm, ReviewForm, RatingForm
+IndentationError: unexpected indent (forms.py, line 34)
+Performing system checks...
+
+Exception ignored in thread started by: <function check_errors.<locals>.wrapper at 0x75298cd9e0c0>
+Traceback (most recent call last):
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 225, in wrapper
+    fn(*args, **kwargs)
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 117, in inner_run
+    self.check(display_num_errors=True)
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/management/base.py", line 376, in check
+    all_issues = self._run_checks(
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/management/base.py", line 366, in _run_checks
+    return checks.run_checks(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/checks/registry.py", line 71, in run_checks
+    new_errors = check(app_configs=app_configs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 40, in check_url_namespaces_unique
+    all_namespaces = _load_all_namespaces(resolver)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 57, in _load_all_namespaces
+    url_patterns = getattr(resolver, 'url_patterns', [])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/utils/functional.py", line 37, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 533, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/utils/functional.py", line 37, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 526, in urlconf_module
+    return import_module(self.urlconf_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/ciarrai/Downloads/Nourish Recipe App/django_project/urls.py", line 18, in <module>
+    from ingredient.views import (
+  File "/home/ciarrai/Downloads/Nourish Recipe App/ingredient/views.py", line 4, in <module>
+    from .forms import SignupForm, LoginForm, UserProfileForm, ReviewForm, RatingForm
+IndentationError: unexpected indent (forms.py, line 34)
+Performing system checks...
+
+Exception ignored in thread started by: <function check_errors.<locals>.wrapper at 0x7a9a1ff120c0>
+Traceback (most recent call last):
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 225, in wrapper
+    fn(*args, **kwargs)
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 117, in inner_run
+    self.check(display_num_errors=True)
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/management/base.py", line 376, in check
+    all_issues = self._run_checks(
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/management/base.py", line 366, in _run_checks
+    return checks.run_checks(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/checks/registry.py", line 71, in run_checks
+    new_errors = check(app_configs=app_configs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 40, in check_url_namespaces_unique
+    all_namespaces = _load_all_namespaces(resolver)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 57, in _load_all_namespaces
+    url_patterns = getattr(resolver, 'url_patterns', [])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/utils/functional.py", line 37, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 533, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/utils/functional.py", line 37, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/home/ciarrai/Downloads/Nourish Recipe App/.venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 526, in urlconf_module
+    return import_module(self.urlconf_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/ciarrai/Downloads/Nourish Recipe App/django_project/urls.py", line 18, in <module>
+    from ingredient.views import (
+  File "/home/ciarrai/Downloads/Nourish Recipe App/ingredient/views.py", line 4, in <module>
+    from .forms import SignupForm, LoginForm, UserProfileForm, ReviewForm, RatingForm
+SyntaxError: unmatched '}' (forms.py, line 99)
+Performing system checks...
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+December 08, 2025 - 09:40:39
+Django version 2.1, using settings 'django_project.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+[08/Dec/2025 09:46:56] "GET / HTTP/1.1" 200 15281
+[08/Dec/2025 09:47:17] "GET / HTTP/1.1" 200 15281
+[08/Dec/2025 09:47:18] "GET /recipes/ HTTP/1.1" 200 15899
+[08/Dec/2025 09:47:25] "GET /login/ HTTP/1.1" 200 8053
+Not Found: /favicon.ico
+[08/Dec/2025 09:47:26] "GET /favicon.ico HTTP/1.1" 404 4714
+[08/Dec/2025 09:47:38] "POST /login/ HTTP/1.1" 200 8377
+[08/Dec/2025 09:47:52] "POST /login/ HTTP/1.1" 302 0
+[08/Dec/2025 09:47:52] "GET / HTTP/1.1" 200 16605
+[08/Dec/2025 09:48:03] "GET /shopping-list/ HTTP/1.1" 200 11302
+[08/Dec/2025 09:48:09] "GET /favorites/ HTTP/1.1" 200 8399
+[08/Dec/2025 09:48:13] "GET /profile/ HTTP/1.1" 200 9270
+[08/Dec/2025 09:48:18] "GET /my-recipes/ HTTP/1.1" 200 7918

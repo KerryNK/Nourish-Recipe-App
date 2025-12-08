@@ -54,7 +54,7 @@
                         
                         <div class="recipe-meta mb-3">
                             <span class="badge bg-success">{{ recipe.difficulty|title }}</span>
-                            <span class="badge bg-info">{{ recipe.prep_time + recipe.cook_time }} min</span>
+                            <span class="badge bg-info">{{ recipe.prep_time|add:recipe.cook_time }} min</span>
                             <span class="badge bg-warning">{{ recipe.servings }} servings</span>
                         </div>
                         
