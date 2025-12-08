@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - Nourish Recipe App{% endblock %}
+
+{% block content %}
+<section class="hero py-5 mb-5">
+    <div class="text-center">
+        <h1 class="display-4 fw-bold mb-3">Welcome to Nourish</h1>
+        <p class="lead mb-4">Discover, save, and cook delicious East African recipes</p>
+        
+        {% if user.is_authenticated %}
+            <p class="mb-4">Welcome back, <strong>{{ user.first_name|default:user.username }}</strong>!</p>
+            <div>
+                <a href="{% url 'recipes' %}" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-book"></i> Browse Recipes
+                </a>
+                <a href="{% url 'my_favorites' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-heart"></i> My Favorites
+                </a>
+            </div>
+        {% else %}
+            <p class="mb-4">Sign up to save your favorite recipes and create shopping lists</p>
+            <div>
+                <a href="{% url 'signup' %}" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Log In
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{% if recipes %}
+<section class="featured-recipes mb-5">
+    <h2 class="mb-4"><i class="fas fa-star"></i> Featured Recipes</h2>
+    <div class="row">
+        {% for recipe in recipes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    {% if recipe.image %}
+                        <img src="{{ recipe.image }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-utensils fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ recipe.title }}</h5>
+                        <p class="card-text text-muted">{{ recipe.description|truncatewords:15 }}</p>
+                        
+                        <div class="recipe-meta mb-3">
+                            <span class="badge bg-success">{{ recipe.difficulty|title }}</span>
+                            <span class="badge bg-info">{{ recipe.prep_time + recipe.cook_time }} min</span>
+                            <span class="badge bg-warning">{{ recipe.servings }} servings</span>
+                        </div>
+                        
+                        {% if recipe.average_rating %}
+                            <div class="mb-3">
+                                <span class="text-warning">
+                                    {% for i in "x"|rjust:"5" %}
+                                        {% if forloop.counter <= recipe.average_rating %}
+                                            <i class="fas fa-star"></i>
+                                        {% elif forloop.counter < recipe.average_rating|add:"1" %}
+                                            <i class="fas fa-star-half-alt"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                                <span class="text-muted">({{ recipe.ratings.count }} ratings)</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-footer bg-light">
+                        <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-sm btn-primary w-100">
+                            <i class="fas fa-eye"></i> View Recipe
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="features mb-5">
+    <h2 class="mb-4 text-center">Why Nourish?</h2>
+    <div class="row">
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="text-center">
+                <i class="fas fa-leaf fa-3x mb-3" style="color: var(--secondary-green);"></i>
+                <h5>East African Recipes</h5>
+                <p class="text-muted">Discover authentic recipes from your culture</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="text-center">
+                <i class="fas fa-heart fa-3x mb-3" style="color: #dc3545;"></i>
+                <h5>Save Favorites</h5>
+                <p class="text-muted">Keep your favorite recipes in one place</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="text-center">
+                <i class="fas fa-shopping-cart fa-3x mb-3" style="color: var(--warning);"></i>
+                <h5>Smart Shopping Lists</h5>
+                <p class="text-muted">Auto-generate lists from your selected recipes</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="text-center">
+                <i class="fas fa-utensils fa-3x mb-3" style="color: var(--light-green);"></i>
+                <h5>Community Reviews</h5>
+                <p class="text-muted">Share & read recipe reviews from real cooks</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
