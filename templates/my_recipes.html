@@ -7,8 +7,8 @@
 <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center">
         <h1><i class="fas fa-pencil"></i> My Recipes</h1>
-        <a href="#" class="btn btn-primary" disabled>
-            <i class="fas fa-plus"></i> Add New Recipe (Coming Soon)
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Browse Recipes
         </a>
     </div>
     <p class="text-muted">You have created {{ recipes|length }} recipe{{ recipes|length|pluralize }}</p>
@@ -59,7 +59,7 @@
 {% else %}
     <div class="alert alert-info" role="alert">
         <i class="fas fa-info-circle"></i> <strong>No recipes yet!</strong>
-        <p>You haven't submitted any recipes. Feature coming soon!</p>
+        <p>You haven't saved any recipes. Browse our collection to find recipes you love!</p>
     </div>
 {% endif %}
 {% endblock %}

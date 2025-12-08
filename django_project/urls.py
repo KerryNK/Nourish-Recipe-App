@@ -20,7 +20,8 @@ from ingredient.views import (
     signup, login_view, logout_view, profile,
     home, recipes, recipe_detail, toggle_favorite,
     my_favorites, my_recipes, add_review, add_rating,
-    shopping_list, add_to_shopping_list, toggle_shopping_item, clear_shopping_list
+    shopping_list, add_to_shopping_list, toggle_shopping_item, clear_shopping_list,
+    delete_shopping_item, add_manual_shopping_item
 )
 
 urlpatterns = [
@@ -56,6 +57,8 @@ urlpatterns = [
     path('shopping-list/', shopping_list, name='shopping_list'),
     path('recipe/<int:recipe_id>/add-to-list/', add_to_shopping_list, name='add_to_shopping_list'),
     path('shopping-list/<int:item_id>/toggle/', toggle_shopping_item, name='toggle_shopping_item'),
+    path('shopping-list/<int:item_id>/delete/', delete_shopping_item, name='delete_shopping_item'),
+    path('shopping-list/add-manual/', add_manual_shopping_item, name='add_manual_shopping_item'),
     path('shopping-list/clear/', clear_shopping_list, name='clear_shopping_list'),
     
     # API endpoints (legacy)

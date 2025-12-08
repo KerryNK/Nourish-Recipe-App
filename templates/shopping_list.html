@@ -150,8 +150,23 @@ function toggleItem(itemId) {
 
 function removeItem(itemId) {
     if (confirm('Remove this item?')) {
-        // TODO: Implement remove endpoint
-        location.reload();
+        fetch(`/shopping-list/${itemId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            location.reload();
+        });
     }
 }
 
@@ -167,8 +182,30 @@ function addManualItem() {
     const unit = document.getElementById('unit').value;
     
     if (name && amount) {
-        // TODO: Implement manual item addition
-        alert('Item added! (Feature coming soon)');
+        fetch('/shopping-list/add-manual/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                amount: amount,
+                unit: unit
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('ingredient-name').value = '';
+                document.getElementById('amount').value = '';
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error adding item');
+        });
     }
 }
 </script>

@@ -307,3 +307,34 @@ def clear_shopping_list(request):
   shopping_list.items.all().delete()
   messages.success(request, 'Shopping list cleared.')
   return redirect('shopping_list')
+
+
+@login_required(login_url='login')
+def delete_shopping_item(request, item_id):
+  """Delete a shopping list item (AJAX)"""
+  from .models import ShoppingListItem
+  item = get_object_or_404(ShoppingListItem, id=item_id, shopping_list__user=request.user)
+  item.delete()
+  return JsonResponse({'success': True})
+
+
+@login_required(login_url='login')
+def add_manual_shopping_item(request):
+  """Add a manual item to shopping list (AJAX)"""
+  from .models import ShoppingListItem
+  
+  if request.method == 'POST':
+    data = json.loads(request.body)
+    shopping_list = get_object_or_404(ShoppingList, user=request.user)
+    
+    ShoppingListItem.objects.create(
+      shopping_list=shopping_list,
+      ingredient_name=data.get('name', ''),
+      amount=Decimal(data.get('amount', 0)),
+      unit=data.get('unit', 'piece'),
+      is_purchased=False
+    )
+    
+    return JsonResponse({'success': True})
+  
+  return JsonResponse({'success': False})
