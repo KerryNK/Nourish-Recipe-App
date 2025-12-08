@@ -4,13 +4,6 @@
 
 Recipe App is a django web app that allow user to search recipes by ingredients. There are two ways to search recipes. 1. On home page(ingredient page), user can select `one` ingredient to search recipes by clicking on the ingredient card. 2. On recipes page, user can search recipes by input `multiple` ingredients' name.  
 
-## Contents
-* [Built With](https://github.com/sumin3/Recipe-Django-App#Built-With)
-* [Getting started](https://github.com/sumin3/Recipe-Django-App#Getting-started)
-* [Database](https://github.com/sumin3/Recipe-Django-App#Database)
-* [Demo](https://github.com/sumin3/Recipe-Django-App#Demo)
-* [Author](https://github.com/sumin3/Recipe-Django-App#Author)
-
 ## Built With
 - Web framework [Django](https://www.djangoproject.com/) (version 2.1) for this project
 - Open source toolkit [Bootstrap](https://getbootstrap.com/) for fontend 
@@ -106,20 +99,88 @@ Save it!
 >>> r1 = recipeItem(name="recipe-name", ingredients="ingredient1#ingredient2#ingredient3", directions="step1#step2#step3", img_url="image-url-link")
 >>> r1.save()
 ```
-Associate the recipe `r1` with a ingredient `i1`:
-```
->>> r1.list_ingredient.add(i1)
-```
-- To update a value
-```
->>> i1.name = "beef"
->>> i1.save(update_fields = ['name'])
-```
-Want to learn more? Click [Django documentation](https://docs.djangoproject.com/en/2.2/)
+# 🌿 Nourish by Kerry
 
-## Demo
-- [Video Recording Demo](https://drive.google.com/file/d/17bRMjitA5LP1EotJRLqfqB2L1UgxS8sJ/view?usp=sharing)
-- [Images](https://github.com/sumin3/Recipe-Django-App/tree/master/DemoImages)
+### A Smart Recipe, Meal Planning & Nutrition Web App
 
-## Author
-[Sumin Yu](https://github.com/sumin3)
+Nourish by Kerry is a modern, user-friendly recipe and meal-planning web application built with Python, Django, and Bootstrap. It helps users discover recipes, build personal collections, plan meals, track ingredients, and auto-generate grocery lists.
+
+Designed for clarity and speed, Nourish focuses on a clean responsive UI and practical features that make home cooking easier.
+
+---
+
+## ✨ Core Features
+
+- Smart Recipe Search: search by ingredients, name, or category; filter by time, difficulty, diet, or cost.
+- Personal Recipe Manager: add, edit, and delete recipes; upload images; add ingredients and step-by-step instructions.
+- Diet Filters: vegetarian, vegan, high-protein, keto, low-cost options.
+- Meal Planner: assign recipes to days and create weekly plans.
+- Auto-Generated Grocery Lists: combine ingredient quantities from selected recipes and download or view on mobile.
+- Responsive UI (Bootstrap): fast and mobile-friendly.
+
+---
+
+## 🛠️ Tech Stack
+
+- Backend: Python 3 + Django
+- Frontend: HTML, CSS, Bootstrap
+- Templates: Django templates
+- Database: SQLite for development (PostgreSQL recommended for production)
+
+---
+
+## 🚀 Quick Install (Linux / Ubuntu)
+
+1. Clone the repo:
+
+```bash
+git clone https://github.com/yourusername/nourish-by-kerry.git
+cd nourish-by-kerry
+```
+
+2. Create & activate a virtualenv:
+
+```bash
+python3 -m venv env
+source env/bin/activate
+```
+
+3. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Run migrations and start the dev server:
+
+```bash
+python manage.py migrate
+python manage.py runserver
+```
+
+Open your browser at `http://127.0.0.1:8000/`.
+
+---
+
+## 📦 Future Roadmap
+
+- User accounts & profiles (done)
+- Enhanced meal planner & nutrition breakdown
+- Shopping list export (CSV/print)
+- Premium features and AI recipe suggestions
+
+---
+
+## 👩‍💻 Author
+
+Kerry Koech — student & developer passionate about food tech and digital wellness.
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+If you want, I can also help with: creating a logo, building a landing page, adding CI, or committing and opening a PR with this README.
