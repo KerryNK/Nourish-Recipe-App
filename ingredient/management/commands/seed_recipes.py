@@ -77,7 +77,7 @@ class Command(BaseCommand):
                 'servings': 4,
                 'difficulty': 'easy',
                 'category': 'dinner',
-                'image': 'https://via.placeholder.com/400x300?text=Ugali+Sukuma+Wiki',
+                'image': '/static/images/ugaliwiki.png',
                 'created_by': demo_user,
                 'is_published': True,
             }
@@ -133,7 +133,7 @@ class Command(BaseCommand):
                 'servings': 4,
                 'difficulty': 'medium',
                 'category': 'dinner',
-                'image': 'https://via.placeholder.com/400x300?text=Nyama+Choma',
+                'image': '/static/images/nyamachoma.png',
                 'created_by': demo_user,
                 'is_published': True,
             }
@@ -189,7 +189,7 @@ class Command(BaseCommand):
                 'servings': 6,
                 'difficulty': 'easy',
                 'category': 'breakfast',
-                'image': 'https://via.placeholder.com/400x300?text=Chapati',
+                'image': '/static/images/chapati.png',
                 'created_by': demo_user,
                 'is_published': True,
             }
@@ -245,7 +245,7 @@ class Command(BaseCommand):
                 'servings': 6,
                 'difficulty': 'medium',
                 'category': 'lunch',
-                'image': 'https://via.placeholder.com/400x300?text=Beans+Stew',
+                'image': '/static/images/lentils.png',
                 'created_by': demo_user,
                 'is_published': True,
             }
@@ -304,7 +304,7 @@ class Command(BaseCommand):
                 'servings': 6,
                 'difficulty': 'easy',
                 'category': 'dinner',
-                'image': 'https://via.placeholder.com/400x300?text=Pilau',
+                'image': 'static/images/pilau.png',
                 'created_by': demo_user,
                 'is_published': True,
             }

@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from ingredient.views import (
     ingredientView, searchView, get_ingredientId, get_match_recipe,
     signup, login_view, logout_view, profile,
@@ -65,3 +65,6 @@ urlpatterns = [
     path('api/ingredient_id/<ingredientName>', get_ingredientId),
     path('api/match_recipe/', get_match_recipe),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

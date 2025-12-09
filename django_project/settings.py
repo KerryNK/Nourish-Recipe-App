@@ -131,6 +131,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Production Security Settings
 # Only apply strict settings if not in DEBUG mode
 if not DEBUG:
