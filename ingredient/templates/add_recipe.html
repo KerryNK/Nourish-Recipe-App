@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Recipe - Nourish Recipe App{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="mb-4"><i class="fas fa-plus-circle"></i> Add New Recipe</h2>
+
+                <form method="post" id="recipe-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Basic Information -->
+                    <h4 class="mb-3">Basic Information</h4>
+                    <div class="mb-3">
+                        {{ form.title.label_tag }}
+                        {{ form.title }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.description.label_tag }}
+                        {{ form.description }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.image.label_tag }}
+                        {{ form.image }}
+                        <small class="form-text text-muted">Upload an image file (JPG, PNG, etc.)</small>
+                    </div>
+
+                    <!-- Recipe Details -->
+                    <h4 class="mb-3 mt-4">Recipe Details</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.category.label_tag }}
+                            {{ form.category }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.difficulty.label_tag }}
+                            {{ form.difficulty }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {{ form.prep_time.label_tag }}
+                            {{ form.prep_time }}
+                            <small class="form-text text-muted">minutes</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form.cook_time.label_tag }}
+                            {{ form.cook_time }}
+                            <small class="form-text text-muted">minutes</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form.servings.label_tag }}
+                            {{ form.servings }}
+                        </div>
+                    </div>
+
+                    <!-- Ingredients -->
+                    <h4 class="mb-3 mt-4">Ingredients</h4>
+                    <div id="ingredients-container">
+                        <div class="ingredient-row mb-3">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="text" name="ingredient_name[]" class="form-control"
+                                        placeholder="Ingredient name" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" name="ingredient_amount[]" class="form-control"
+                                        placeholder="Amount" step="0.01" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="ingredient_unit[]" class="form-control" required>
+                                        <option value="g">grams</option>
+                                        <option value="kg">kilograms</option>
+                                        <option value="ml">milliliters</option>
+                                        <option value="l">liters</option>
+                                        <option value="tbsp">tablespoons</option>
+                                        <option value="tsp">teaspoons</option>
+                                        <option value="cup">cups</option>
+                                        <option value="piece">pieces</option>
+                                        <option value="whole">whole</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" name="ingredient_notes[]" class="form-control"
+                                        placeholder="Notes (optional)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-success mb-4" onclick="addIngredient()">
+                        <i class="fas fa-plus"></i> Add Ingredient
+                    </button>
+
+                    <!-- Cooking Steps -->
+                    <h4 class="mb-3 mt-4">Cooking Steps</h4>
+                    <div id="steps-container">
+                        <div class="step-row mb-3">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <textarea name="step_instruction[]" class="form-control" rows="2"
+                                        placeholder="Step 1 instructions" required></textarea>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" name="step_time[]" class="form-control"
+                                        placeholder="Time (min)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-success mb-4" onclick="addStep()">
+                        <i class="fas fa-plus"></i> Add Step
+                    </button>
+
+                    <!-- Submit -->
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Save Recipe
+                        </button>
+                        <a href="{% url 'my_recipes' %}" class="btn btn-success btn-lg">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let ingredientCount = 1;
+    let stepCount = 1;
+
+    function addIngredient() {
+        ingredientCount++;
+        const container = document.getElementById('ingredients-container');
+        const newRow = document.createElement('div');
+        newRow.className = 'ingredient-row mb-3';
+        newRow.innerHTML = `
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="ingredient_name[]" class="form-control" placeholder="Ingredient name" required>
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="ingredient_amount[]" class="form-control" placeholder="Amount" step="0.01" required>
+            </div>
+            <div class="col-md-3">
+                <select name="ingredient_unit[]" class="form-control" required>
+                    <option value="g">grams</option>
+                    <option value="kg">kilograms</option>
+                    <option value="ml">milliliters</option>
+                    <option value="l">liters</option>
+                    <option value="tbsp">tablespoons</option>
+                    <option value="tsp">teaspoons</option>
+                    <option value="cup">cups</option>
+                    <option value="piece">pieces</option>
+                    <option value="whole">whole</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="ingredient_notes[]" class="form-control" placeholder="Notes">
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.ingredient-row').remove()">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `;
+        container.appendChild(newRow);
+    }
+
+    function addStep() {
+        stepCount++;
+        const container = document.getElementById('steps-container');
+        const newRow = document.createElement('div');
+        newRow.className = 'step-row mb-3';
+        newRow.innerHTML = `
+        <div class="row">
+            <div class="col-md-10">
+                <textarea name="step_instruction[]" class="form-control" rows="2" placeholder="Step ${stepCount} instructions" required></textarea>
+            </div>
+            <div class="col-md-1">
+                <input type="number" name="step_time[]" class="form-control" placeholder="Time">
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.step-row').remove()">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `;
+        container.appendChild(newRow);
+    }
+</script>
+{% endblock %}

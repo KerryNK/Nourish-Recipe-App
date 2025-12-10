@@ -15,51 +15,57 @@
 </div>
 
 {% if recipes %}
-    <div class="row">
-        {% for recipe in recipes %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    {% if recipe.image %}
-                        <img src="{{ recipe.image }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 200px; object-fit: cover;">
-                    {% else %}
-                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <i class="fas fa-utensils fa-3x text-muted"></i>
-                        </div>
-                    {% endif %}
-                    
-                    <div class="card-body">
-                        <h5 class="card-title">{{ recipe.title }}</h5>
-                        <p class="card-text text-muted small">{{ recipe.description|truncatewords:15 }}</p>
-                        
-                        <div class="recipe-meta mb-3">
-                            <span class="badge bg-success">{{ recipe.difficulty|title }}</span>
-                            <span class="badge bg-info">{{ recipe.prep_time|add:recipe.cook_time }} min</span>
-                        </div>
-                        
-                        <p class="small">
-                            <span class="badge bg-light text-dark">{{ recipe.views_count }} views</span>
-                            <span class="badge bg-light text-dark">{{ recipe.ratings.count }} ratings</span>
-                        </p>
-                    </div>
-                    
-                    <div class="card-footer bg-light border-top">
-                        <div class="d-flex gap-2">
-                            <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-sm btn-primary flex-grow-1">
-                                <i class="fas fa-eye"></i> View
-                            </a>
-                            <button class="btn btn-sm btn-outline-secondary" disabled>
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                        </div>
-                    </div>
+<div class="row">
+    {% for recipe in recipes %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            {% if recipe.image %}
+            {% if 'recipe_images/' in recipe.image.name %}
+            <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}"
+                style="height: 200px; object-fit: cover;">
+            {% else %}
+            <img src="{% static 'images/' %}{{ recipe.image }}" class="card-img-top" alt="{{ recipe.title }}"
+                style="height: 200px; object-fit: cover;">
+            {% endif %}
+            {% else %}
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                <i class="fas fa-utensils fa-3x text-muted"></i>
+            </div>
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title">{{ recipe.title }}</h5>
+                <p class="card-text text-muted small">{{ recipe.description|truncatewords:15 }}</p>
+
+                <div class="recipe-meta mb-3">
+                    <span class="badge bg-success">{{ recipe.difficulty|title }}</span>
+                    <span class="badge bg-success">{{ recipe.prep_time|add:recipe.cook_time }} min</span>
+                </div>
+
+                <p class="small">
+                    <span class="badge bg-light text-dark">{{ recipe.views_count }} views</span>
+                    <span class="badge bg-light text-dark">{{ recipe.ratings.count }} ratings</span>
+                </p>
+            </div>
+
+            <div class="card-footer bg-light border-top">
+                <div class="d-flex gap-2">
+                    <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-sm btn-primary flex-grow-1">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                    <button class="btn btn-sm btn-outline-secondary" disabled>
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
                 </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
+    {% endfor %}
+</div>
 {% else %}
-    <div class="alert alert-info" role="alert">
-        <i class="fas fa-info-circle"></i> <strong>No recipes yet!</strong>
-        <p>You haven't saved any recipes. Browse our collection to find recipes you love!</p>
-    </div>
+<div class="alert alert-info" role="alert">
+    <i class="fas fa-info-circle"></i> <strong>No recipes yet!</strong>
+    <p>You haven't saved any recipes. Browse our collection to find recipes you love!</p>
+</div>
 {% endif %}
 {% endblock %}

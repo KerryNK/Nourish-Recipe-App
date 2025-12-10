@@ -9,30 +9,36 @@
         <!-- Recipe Header -->
         <div class="card mb-4 border-0 shadow-sm">
             {% if recipe.image %}
-                <img src="{{ static '/image' }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 400px; object-fit: cover;">
+            {% if 'recipe_images/' in recipe.image.name %}
+            <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}"
+                style="height: 400px; object-fit: cover;">
             {% else %}
-                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
-                    <i class="fas fa-utensils fa-5x text-muted"></i>
-                </div>
+            <img src="{% static 'images/' %}{{ recipe.image }}" class="card-img-top" alt="{{ recipe.title }}"
+                style="height: 400px; object-fit: cover;">
             {% endif %}
-            
+            {% else %}
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                <i class="fas fa-utensils fa-5x text-muted"></i>
+            </div>
+            {% endif %}
+
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
                         <h1 class="card-title mb-2">{{ recipe.title }}</h1>
                         {% if recipe.description %}
-                            <p class="lead text-muted">{{ recipe.description }}</p>
+                        <p class="lead text-muted">{{ recipe.description }}</p>
                         {% endif %}
                     </div>
                     <div>
                         {% if user.is_authenticated %}
-                            <button class="btn btn-lg" id="favorite-btn" onclick="toggleFavorite({{ recipe.id }})">
-                                <i class="fas fa-heart{% if is_favorited %} favorited{% endif %}" id="favorite-icon"></i>
-                            </button>
+                        <button class="btn btn-lg" id="favorite-btn" data-recipe-id="{{ recipe.id }}">
+                            <i class="fas fa-heart{% if is_favorited %} favorited{% endif %}" id="favorite-icon"></i>
+                        </button>
                         {% endif %}
                     </div>
                 </div>
-                
+
                 <!-- Recipe Meta -->
                 <div class="row mb-4">
                     <div class="col-md-3">
@@ -60,46 +66,71 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Rating -->
                 {% if avg_rating > 0 or recipe.ratings.count > 0 %}
-                    <div class="mb-4">
-                        <h5>Rating</h5>
-                        <div class="d-flex align-items-center gap-3">
-                            <div>
-                                <span class="h4 mb-0">{{ avg_rating }}<span class="text-muted">/5</span></span>
-                                <div class="text-warning">
-                                    {% for i in "x"|rjust:"5" %}
-                                        {% if forloop.counter <= avg_rating %}
-                                            <i class="fas fa-star"></i>
-                                        {% elif forloop.counter < avg_rating|add:"1" %}
-                                            <i class="fas fa-star-half-alt"></i>
-                                        {% else %}
-                                            <i class="far fa-star"></i>
-                                        {% endif %}
+                <div class="mb-4">
+                    <h5>Rating</h5>
+                    <div class="d-flex align-items-center gap-3">
+                        <div>
+                            <span class="h4 mb-0">{{ avg_rating }}<span class="text-muted">/5</span></span>
+                            <div class="text-warning">
+                                {% for i in "12345" %}
+                                {% with a=avg_rating|add:0.0 %}
+                                {% with avg_rating_int=avg_rating|stringformat:"i"|add:0 %}
+                                {% if forloop.counter <= avg_rating_int %} <i class="fas fa-star"></i>
+                                    {% elif forloop.counter == avg_rating_int|add:1 and a > avg_rating_int %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                    <i class="far fa-star"></i>
+                                    {% endif %}
+                                    {% endwith %}
+                                    {% endwith %}
                                     {% endfor %}
-                                </div>
-                            </div>
-                            <div class="text-muted">
-                                ({{ recipe.ratings.count }} rating{{ recipe.ratings.count|pluralize }})
                             </div>
                         </div>
+                        <div class="text-muted">
+                            ({{ recipe.ratings.count }} rating{{ recipe.ratings.count|pluralize }})
+                        </div>
                     </div>
+                </div>
                 {% endif %}
-                
-                <!-- Actions -->
-                <div class="d-flex gap-2">
+
+                <!-- Likes -->
+                <div class="mb-3">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'add_to_shopping_list' recipe.id %}" class="btn btn-success">
-                            <i class="fas fa-shopping-cart"></i> Add to Shopping List
-                        </a>
-                        <a href="{% url 'add_review' recipe.id %}" class="btn btn-primary">
-                            <i class="fas fa-comment"></i> Write Review
-                        </a>
+                    <button class="btn btn-lg" id="like-btn" onclick="toggleLike({{ recipe.id }})">
+                        <i class="fas fa-thumbs-up{% if is_liked %} text-success{% endif %}" id="like-icon"></i>
+                        <span id="likes-count">{{ likes_count }}</span> Like{{ likes_count|pluralize }}
+                    </button>
                     {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-success">
-                            <i class="fas fa-sign-in-alt"></i> Log in to Save
-                        </a>
+                    <span class="text-muted">
+                        <i class="fas fa-thumbs-up"></i> {{ likes_count }} Like{{ likes_count|pluralize }}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 flex-wrap">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'add_to_shopping_list' recipe.id %}" class="btn btn-success">
+                        <i class="fas fa-shopping-cart"></i> Add to Shopping List
+                    </a>
+                    <a href="{% url 'add_review' recipe.id %}" class="btn btn-primary">
+                        <i class="fas fa-comment"></i> Write Review
+                    </a>
+                    <a href="{% url 'ingredient:ai' %}" class="btn btn-success">
+                        <i class="fas fa-robot"></i> AI Assistant
+                    </a>
+                    {% if recipe.created_by == user %}
+                    <a href="{% url 'edit_recipe' recipe.id %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit Recipe
+                    </a>
+                    {% endif %}
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-success">
+                        <i class="fas fa-sign-in-alt"></i> Log in to Save
+                    </a>
                     {% endif %}
                     <button class="btn btn-outline-secondary" onclick="window.print()">
                         <i class="fas fa-print"></i> Print
@@ -107,94 +138,132 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Ingredients -->
         <div class="card mb-4 border-0 shadow-sm">
             <div class="card-body">
                 <h3 class="card-title mb-4">Ingredients</h3>
-                
+
                 {% if user.is_authenticated %}
-                    <div class="mb-3">
-                        <label for="servings-input" class="form-label">Adjust Servings:</label>
-                        <div class="input-group" style="width: 200px;">
-                            <button class="btn btn-outline-secondary" type="button" onclick="decreaseServings()">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <input type="number" class="form-control text-center" id="servings-input" value="{{ recipe.servings }}" min="1" onchange="updateServings()">
-                            <button class="btn btn-outline-secondary" type="button" onclick="increaseServings()">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
+                <div class="mb-3">
+                    <label for="servings-input" class="form-label">Adjust Servings:</label>
+                    <div class="input-group" style="width: 200px;">
+                        <button class="btn btn-outline-secondary" type="button" onclick="decreaseServings()">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" class="form-control text-center" id="servings-input"
+                            value="{{ recipe.servings }}" min="1" onchange="updateServings()">
+                        <button class="btn btn-outline-secondary" type="button" onclick="increaseServings()">
+                            <i class="fas fa-plus"></i>
+                        </button>
                     </div>
+                </div>
                 {% endif %}
-                
+
                 <ul class="list-unstyled">
                     {% for ingredient in recipe.ingredients.all %}
-                        <li class="mb-3 pb-3 border-bottom">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <strong class="ingredient-amount" data-amount="{{ ingredient.amount }}" data-unit="{{ ingredient.unit }}">
-                                        {{ ingredient.amount }} {{ ingredient.unit }}
-                                    </strong>
-                                    {{ ingredient.ingredient.name }}
-                                    {% if ingredient.notes %}
-                                        <span class="text-muted">({{ ingredient.notes }})</span>
-                                    {% endif %}
-                                </div>
+                    <li class="mb-3 pb-3 border-bottom">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong class="ingredient-amount" data-amount="{{ ingredient.amount }}"
+                                    data-unit="{{ ingredient.unit }}">
+                                    {{ ingredient.amount }} {{ ingredient.unit }}
+                                </strong>
+                                {{ ingredient.ingredient.name }}
+                                {% if ingredient.notes %}
+                                <span class="text-muted">({{ ingredient.notes }})</span>
+                                {% endif %}
                             </div>
-                        </li>
+                        </div>
+                    </li>
                     {% empty %}
-                        <li class="text-muted">No ingredients listed</li>
+                    <li class="text-muted">No ingredients listed</li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
-        
+
         <!-- Steps -->
         <div class="card mb-4 border-0 shadow-sm">
             <div class="card-body">
                 <h3 class="card-title mb-4">Cooking Steps</h3>
                 <ol class="list-group list-group-numbered">
                     {% for step in recipe.steps.all %}
-                        <li class="list-group-item border-0 mb-3 pb-3">
-                            <div class="ms-3">
-                                <strong>{{ step.instruction }}</strong>
-                                {% if step.time_minutes %}
-                                    <div class="text-muted small mt-2">
-                                        <i class="fas fa-hourglass-half"></i> {{ step.time_minutes }} minutes
-                                    </div>
-                                {% endif %}
+                    <li class="list-group-item border-0 mb-3 pb-3">
+                        <div class="ms-3">
+                            <strong>{{ step.instruction }}</strong>
+                            {% if step.time_minutes %}
+                            <div class="text-muted small mt-2">
+                                <i class="fas fa-hourglass-half"></i> {{ step.time_minutes }} minutes
                             </div>
-                        </li>
+                            {% endif %}
+                        </div>
+                    </li>
                     {% empty %}
-                        <li class="text-muted">No steps listed</li>
+                    <li class="text-muted">No steps listed</li>
                     {% endfor %}
                 </ol>
             </div>
         </div>
-        
+
         <!-- Reviews Section -->
         {% if recipe.reviews.count > 0 %}
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h3 class="card-title mb-4">Reviews</h3>
-                    <div class="list-group list-group-flush">
-                        {% for review in reviews %}
-                            <div class="list-group-item border-0 pb-4 mb-3">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <h5 class="mb-0">{{ review.title }}</h5>
-                                    <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
-                                </div>
-                                <p class="text-muted small mb-2">By {{ review.user.get_full_name|default:review.user.username }}</p>
-                                <p class="mb-0">{{ review.text }}</p>
-                            </div>
-                        {% endfor %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Reviews</h3>
+                <div class="list-group list-group-flush">
+                    {% for review in reviews %}
+                    <div class="list-group-item border-0 pb-4 mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h5 class="mb-0">{{ review.title }}</h5>
+                            <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                        </div>
+                        <p class="text-muted small mb-2">By {{ review.user.get_full_name|default:review.user.username }}
+                        </p>
+                        <p class="mb-0">{{ review.text }}</p>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
+        </div>
         {% endif %}
+
+        <!-- Comments Section -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Comments ({{ comments.count }})</h3>
+
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'add_comment' recipe.id %}" class="mb-4">
+                    {% csrf_token %}
+                    {{ comment_form.text }}
+                    <button type="submit" class="btn btn-success mt-2">
+                        <i class="fas fa-comment"></i> Add Comment
+                    </button>
+                </form>
+                {% else %}
+                <p class="text-muted"><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
+                {% endif %}
+
+                {% if comments %}
+                <div class="comments-list">
+                    {% for comment in comments %}
+                    <div class="comment mb-3 pb-3 border-bottom">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                            <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                        </div>
+                        <p class="mb-0 mt-2">{{ comment.text }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No comments yet. Be the first to comment!</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    
+
     <!-- Sidebar -->
     <div class="col-lg-4">
         <!-- Recipe Info Card -->
@@ -217,7 +286,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <!-- Nutrition Info (if available) -->
         <div class="card border-0 shadow-sm">
             <div class="card-body">
@@ -239,51 +308,128 @@
 </div>
 
 <script>
-function toggleFavorite(recipeId) {
-    fetch(`/recipe/${recipeId}/favorite/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json'
+    // Get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        const icon = document.getElementById('favorite-icon');
-        if (data.is_favorited) {
-            icon.classList.add('favorited');
+        return cookieValue;
+    }
+
+    function toggleFavorite(recipeId) {
+        console.log('toggleFavorite called with recipeId:', recipeId);
+        const csrftoken = getCookie('csrftoken');
+        console.log('CSRF token:', csrftoken);
+
+        fetch(`/recipe/${recipeId}/favorite/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                const icon = document.getElementById('favorite-icon');
+                if (data.is_favorited) {
+                    icon.classList.add('favorited');
+                    console.log('Added to favorites');
+                } else {
+                    icon.classList.remove('favorited');
+                    console.log('Removed from favorites');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    // Add event listener when DOM is loaded
+    console.log('Setting up DOMContentLoaded listener');
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM loaded - looking for favorite button');
+        const favoriteBtn = document.getElementById('favorite-btn');
+        console.log('Favorite button:', favoriteBtn);
+
+        if (favoriteBtn) {
+            console.log('Favorite button found! Adding click listener');
+            favoriteBtn.addEventListener('click', function () {
+                console.log('BUTTON CLICKED!');
+                const recipeId = this.getAttribute('data-recipe-id');
+                console.log('Recipe ID from button:', recipeId);
+                toggleFavorite(recipeId);
+            });
+            console.log('Click listener added successfully');
         } else {
-            icon.classList.remove('favorited');
+            console.error('ERROR: Favorite button NOT found!');
         }
     });
-}
 
-function increaseServings() {
-    const input = document.getElementById('servings-input');
-    input.value = parseInt(input.value) + 1;
-    updateServings();
-}
+    function toggleLike(recipeId) {
+        const csrftoken = getCookie('csrftoken');
+        fetch(`/recipe/${recipeId}/like/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const icon = document.getElementById('like-icon');
+                const count = document.getElementById('likes-count');
+                count.textContent = data.likes_count;
 
-function decreaseServings() {
-    const input = document.getElementById('servings-input');
-    if (parseInt(input.value) > 1) {
-        input.value = parseInt(input.value) - 1;
+                if (data.is_liked) {
+                    icon.classList.add('text-success');
+                } else {
+                    icon.classList.remove('text-success');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function increaseServings() {
+        const input = document.getElementById('servings-input');
+        input.value = parseInt(input.value) + 1;
         updateServings();
     }
-}
 
-function updateServings() {
-    const input = document.getElementById('servings-input');
-    const newServings = parseInt(input.value);
-    const originalServings = {{ recipe.servings }};
+    function decreaseServings() {
+        const input = document.getElementById('servings-input');
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+            updateServings();
+        }
+    }
+
+    function updateServings() {
+        const input = document.getElementById('servings-input');
+        const newServings = parseInt(input.value);
+        const originalServings = {{ recipe.servings }
+    };
     const multiplier = newServings / originalServings;
-    
+
     document.querySelectorAll('.ingredient-amount').forEach(el => {
         const originalAmount = parseFloat(el.dataset.amount);
         const newAmount = (originalAmount * multiplier).toFixed(2);
         el.textContent = newAmount + ' ' + el.dataset.unit;
     });
-}
+    }
 </script>
 
 <style>
@@ -293,17 +439,20 @@ function updateServings() {
         color: #ccc;
         transition: color 0.3s ease;
     }
-    
+
     .heart-icon.favorited {
         color: #dc3545;
     }
-    
+
     .heart-icon:hover {
         color: #dc3545;
     }
-    
+
     @media print {
-        .btn, .sticky-top, .d-flex {
+
+        .btn,
+        .sticky-top,
+        .d-flex {
             display: none !important;
         }
     }

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Community - Nourish Recipe App{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1><i class="fas fa-users"></i> Community</h1>
+    <p class="text-muted">Join our community of {{ total_users }} food lovers sharing {{ total_recipes }} amazing
+        recipes!</p>
+</div>
+
+<!-- Community Stats -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <i class="fas fa-book fa-3x mb-3 text-primary"></i>
+            <h3>{{ total_recipes }}</h3>
+            <p class="text-muted mb-0">Total Recipes</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <i class="fas fa-users fa-3x mb-3 text-success"></i>
+            <h3>{{ total_users }}</h3>
+            <p class="text-muted mb-0">Community Members</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <i class="fas fa-star fa-3x mb-3 text-warning"></i>
+            <h3>{{ recipes|length }}</h3>
+            <p class="text-muted mb-0">Shared Recipes</p>
+        </div>
+    </div>
+</div>
+
+<!-- Recipe Grid -->
+<div class="mb-4">
+    <h2><i class="fas fa-fire"></i> Latest from the Community</h2>
+</div>
+
+{% if recipes %}
+<div class="row">
+    {% for recipe in recipes %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            {% if recipe.image %}
+            {% if 'recipe_images/' in recipe.image.name %}
+            <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}"
+                style="height: 200px; object-fit: cover;">
+            {% else %}
+            <img src="{% static 'images/' %}{{ recipe.image }}" class="card-img-top" alt="{{ recipe.title }}"
+                style="height: 200px; object-fit: cover;">
+            {% endif %}
+            {% else %}
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                <i class="fas fa-utensils fa-3x text-muted"></i>
+            </div>
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title">{{ recipe.title }}</h5>
+                <p class="card-text text-muted small">{{ recipe.description|truncatewords:15 }}</p>
+
+                <div class="recipe-meta mb-3">
+                    <span class="badge bg-success">{{ recipe.difficulty|title }}</span>
+                    <span class="badge bg-success">{{ recipe.prep_time|add:recipe.cook_time }} min</span>
+                    <span class="badge bg-success">{{ recipe.servings }} servings</span>
+                </div>
+
+                <!-- Rating and Reviews -->
+                <div class="mb-3">
+                    {% if recipe.avg_rating %}
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-warning">
+                            {% for i in "12345" %}
+                            {% if forloop.counter <= recipe.avg_rating %} <i class="fas fa-star"></i>
+                                {% else %}
+                                <i class="far fa-star"></i>
+                                {% endif %}
+                                {% endfor %}
+                        </span>
+                        <span class="text-muted small">({{ recipe.avg_rating|floatformat:1 }})</span>
+                    </div>
+                    {% else %}
+                    <span class="text-muted small">No ratings yet</span>
+                    {% endif %}
+
+                    {% if recipe.review_count > 0 %}
+                    <div class="text-muted small mt-1">
+                        <i class="fas fa-comment"></i> {{ recipe.review_count }} review{{ recipe.review_count|pluralize
+                        }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Creator Info -->
+                {% if recipe.created_by and recipe.created_by != user %}
+                <div class="text-muted small mb-3">
+                    <i class="fas fa-user"></i> By {{ recipe.created_by.get_full_name|default:recipe.created_by.username }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card-footer bg-light border-top">
+                <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-sm btn-primary w-100">
+                    <i class="fas fa-eye"></i> View Recipe
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    <i class="fas fa-info-circle"></i> No recipes in the community yet. Be the first to share!
+</div>
+{% endif %}
+
+
+
+
+{% endblock %}

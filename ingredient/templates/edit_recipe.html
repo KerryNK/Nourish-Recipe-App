@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Recipe - Nourish Recipe App{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="mb-4"><i class="fas fa-edit"></i> Edit Recipe</h2>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Basic Information -->
+                    <h4 class="mb-3">Basic Information</h4>
+                    <div class="mb-3">
+                        {{ form.title.label_tag }}
+                        {{ form.title }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.description.label_tag }}
+                        {{ form.description }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.image.label_tag }}
+                        {{ form.image }}
+                        <small class="form-text text-muted">Upload a new image file or leave unchanged</small>
+                    </div>
+
+                    <!-- Recipe Details -->
+                    <h4 class="mb-3 mt-4">Recipe Details</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.category.label_tag }}
+                            {{ form.category }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.difficulty.label_tag }}
+                            {{ form.difficulty }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {{ form.prep_time.label_tag }}
+                            {{ form.prep_time }}
+                            <small class="form-text text-muted">minutes</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form.cook_time.label_tag }}
+                            {{ form.cook_time }}
+                            <small class="form-text text-muted">minutes</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form.servings.label_tag }}
+                            {{ form.servings }}
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Note:</strong> To edit ingredients and steps, please use the Django admin interface at
+                        <a href="/admin/" class="alert-link">/admin/</a>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Update Recipe
+                        </button>
+                        <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-success btn-lg">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

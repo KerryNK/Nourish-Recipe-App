@@ -14,7 +14,8 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
-                <input type="text" class="form-control" id="search-input" placeholder="Search recipes..." onkeyup="filterRecipes()">
+                <input type="text" class="form-control" id="search-input" placeholder="Search recipes..."
+                    onkeyup="filterRecipes()">
             </div>
             <div class="col-md-3">
                 <select class="form-select" id="difficulty-filter" onchange="filterRecipes()">
@@ -38,88 +39,94 @@
 
 <!-- Recipe Grid -->
 {% if recipes %}
-    <div class="row" id="recipe-grid">
-        {% for recipe in recipes %}
-            <div class="col-md-6 col-lg-4 mb-4 recipe-card" data-title="{{ recipe.title|lower }}" data-difficulty="{{ recipe.difficulty }}" data-time="{{ recipe.prep_time|add:recipe.cook_time }}">
-                <div class="card h-100 border-0 shadow-sm">
-                    {% if recipe.image %}
-                        <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 200px; object-fit: cover;">
-                    {% else %}
-                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <i class="fas fa-utensils fa-3x text-muted"></i>
-                        </div>
-                    {% endif %}
-                    
-                    <div class="card-body">
-                        <h5 class="card-title">{{ recipe.title }}</h5>
-                        <p class="card-text text-muted small">{{ recipe.description|truncatewords:15 }}</p>
-                        
-                        <div class="recipe-meta mb-3">
-                            <span class="badge bg-success">{{ recipe.difficulty|title }}</span>
-                            <span class="badge bg-info">{{ recipe.prep_time|add:recipe.cook_time }} min</span>
-                            <span class="badge bg-warning text-dark">{{ recipe.servings }} servings</span>
-                        </div>
-                        
-                        {% if recipe.average_rating %}
-                            <div class="mb-3">
-                                <span class="text-warning small">
-                                    {% for i in "x"|rjust:"5" %}
-                                        {% if forloop.counter <= recipe.average_rating %}
-                                            <i class="fas fa-star"></i>
-                                        {% elif forloop.counter < recipe.average_rating|add:"1" %}
-                                            <i class="fas fa-star-half-alt"></i>
-                                        {% else %}
-                                            <i class="far fa-star"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                </span>
-                                <span class="text-muted small">({{ recipe.ratings.count }})</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="card-footer bg-light border-top">
-                        <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-sm btn-primary w-100">
-                            <i class="fas fa-eye"></i> View Recipe
-                        </a>
-                    </div>
-                </div>
+<div class="row" id="recipe-grid">
+    {% for recipe in recipes %}
+    <div class="col-md-6 col-lg-4 mb-4 recipe-card" data-title="{{ recipe.title|lower }}"
+        data-difficulty="{{ recipe.difficulty }}" data-time="{{ recipe.prep_time|add:recipe.cook_time }}">
+        <div class="card h-100 border-0 shadow-sm">
+            {% if recipe.image %}
+            {% if 'recipe_images/' in recipe.image.name %}
+            <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}"
+                style="height: 200px; object-fit: cover;">
+            {% else %}
+            <img src="{% static 'images/' %}{{ recipe.image }}" class="card-img-top" alt="{{ recipe.title }}"
+                style="height: 200px; object-fit: cover;">
+            {% endif %}
+            {% else %}
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                <i class="fas fa-utensils fa-3x text-muted"></i>
             </div>
-        {% endfor %}
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title">{{ recipe.title }}</h5>
+                <p class="card-text text-muted small">{{ recipe.description|truncatewords:15 }}</p>
+
+                <div class="recipe-meta mb-3">
+                    <span class="badge bg-success">{{ recipe.difficulty|title }}</span>
+                    <span class="badge bg-success">{{ recipe.prep_time|add:recipe.cook_time }} min</span>
+                    <span class="badge bg-success">{{ recipe.servings }} servings</span>
+                </div>
+
+                {% if recipe.average_rating %}
+                <div class="mb-3">
+                    <span class="text-warning small">
+                        {% for i in "x"|rjust:"5" %}
+                        {% if forloop.counter <= recipe.average_rating %} <i class="fas fa-star"></i>
+                            {% elif forloop.counter < recipe.average_rating|add:"1" %} <i class="fas fa-star-half-alt">
+                                </i>
+                                {% else %}
+                                <i class="far fa-star"></i>
+                                {% endif %}
+                                {% endfor %}
+                    </span>
+                    <span class="text-muted small">({{ recipe.ratings.count }})</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card-footer bg-light border-top">
+                <a href="{% url 'recipe_detail' recipe.id %}" class="btn btn-sm btn-primary w-100">
+                    <i class="fas fa-eye"></i> View Recipe
+                </a>
+            </div>
+        </div>
     </div>
+    {% endfor %}
+</div>
 {% else %}
-    <div class="alert alert-info" role="alert">
-        <i class="fas fa-info-circle"></i> No recipes found.
-    </div>
+<div class="alert alert-info" role="alert">
+    <i class="fas fa-info-circle"></i> No recipes found.
+</div>
 {% endif %}
 
 <script>
-function filterRecipes() {
-    const searchTerm = document.getElementById('search-input').value.toLowerCase();
-    const difficultyFilter = document.getElementById('difficulty-filter').value;
-    const timeFilter = parseInt(document.getElementById('time-filter').value) || 999;
-    
-    document.querySelectorAll('.recipe-card').forEach(card => {
-        const title = card.dataset.title;
-        const difficulty = card.dataset.difficulty;
-        const time = parseInt(card.dataset.time);
-        
-        let show = true;
-        
-        if (searchTerm && !title.includes(searchTerm)) {
-            show = false;
-        }
-        
-        if (difficultyFilter && difficulty !== difficultyFilter) {
-            show = false;
-        }
-        
-        if (timeFilter < 120 && time > timeFilter) {
-            show = false;
-        }
-        
-        card.style.display = show ? 'block' : 'none';
-    });
-}
+    function filterRecipes() {
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        const difficultyFilter = document.getElementById('difficulty-filter').value;
+        const timeFilter = parseInt(document.getElementById('time-filter').value) || 999;
+
+        document.querySelectorAll('.recipe-card').forEach(card => {
+            const title = card.dataset.title;
+            const difficulty = card.dataset.difficulty;
+            const time = parseInt(card.dataset.time);
+
+            let show = true;
+
+            if (searchTerm && !title.includes(searchTerm)) {
+                show = false;
+            }
+
+            if (difficultyFilter && difficulty !== difficultyFilter) {
+                show = false;
+            }
+
+            if (timeFilter < 120 && time > timeFilter) {
+                show = false;
+            }
+
+            card.style.display = show ? 'block' : 'none';
+        });
+    }
 </script>
 {% endblock %}

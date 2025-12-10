@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
-from .models import ingredientItem, recipeItem, Recipe, Favorite, Rating, Review, ShoppingList
-from .forms import SignupForm, LoginForm, UserProfileForm, ReviewForm, RatingForm
+from .models import ingredientItem, recipeItem, Recipe, Favorite, Rating, Review, Comment, Like, ShoppingList
+from .forms import SignupForm, LoginForm, UserProfileForm, ReviewForm, RatingForm, AddRecipeForm, RecipeIngredientForm, RecipeStepForm, CommentForm
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Avg
+from django.db.models import Avg, Count
+from django.db import models
 from decimal import Decimal
 
 #view for ingredient page
@@ -173,16 +174,27 @@ def recipe_detail(request, recipe_id):
   # Get user's rating if logged in
   user_rating = None
   is_favorited = False
+  is_liked = False
   if request.user.is_authenticated:
     user_rating = recipe.ratings.filter(user=request.user).first()
     is_favorited = Favorite.objects.filter(user=request.user, recipe=recipe).exists()
+    is_liked = Like.objects.filter(user=request.user, recipe=recipe).exists()
+  
+  # Get comments and likes
+  comments = recipe.comments.all()
+  likes_count = recipe.likes.count()
+  comment_form = CommentForm()
   
   context = {
     'recipe': recipe,
     'avg_rating': round(avg_rating, 1) if avg_rating else 0,
     'user_rating': user_rating,
     'is_favorited': is_favorited,
+    'is_liked': is_liked,
     'reviews': recipe.reviews.all(),
+    'comments': comments,
+    'likes_count': likes_count,
+    'comment_form': comment_form,
   }
   
   return render(request, 'recipe_detail.html', context)
@@ -338,3 +350,142 @@ def add_manual_shopping_item(request):
     return JsonResponse({'success': True})
   
   return JsonResponse({'success': False})
+
+def ai_view(request):
+  """AI recipe assistant page"""
+  return render(request, 'ai.html')
+
+def statistic_view(request):
+  """Statistics page"""
+  return render(request, 'statistic.html')
+
+def community(request):
+  """Community page showing all recipes with reviews and ratings"""
+  recipes = Recipe.objects.filter(is_published=True).annotate(
+    avg_rating=Avg('ratings__score'),
+    review_count=models.Count('reviews')
+  ).order_by('-created_at')
+  
+  context = {
+    'recipes': recipes,
+    'total_recipes': recipes.count(),
+    'total_users': User.objects.count(),
+  }
+  
+  return render(request, 'community.html', context)
+
+
+# ============ RECIPE CREATION & EDITING ============
+
+@login_required(login_url='login')
+def create_recipe(request):
+  """Create a new recipe"""
+  from .models import Ingredient
+  
+  if request.method == 'POST':
+    form = AddRecipeForm(request.POST, request.FILES)
+    if form.is_valid():
+      recipe = form.save(commit=False)
+      recipe.created_by = request.user
+      recipe.save()
+      
+      # Handle ingredients from POST data
+      ingredient_names = request.POST.getlist('ingredient_name[]')
+      ingredient_amounts = request.POST.getlist('ingredient_amount[]')
+      ingredient_units = request.POST.getlist('ingredient_unit[]')
+      ingredient_notes = request.POST.getlist('ingredient_notes[]')
+      
+      for i in range(len(ingredient_names)):
+        if ingredient_names[i]:
+          # Get or create ingredient
+          ingredient, created = Ingredient.objects.get_or_create(
+            name=ingredient_names[i].strip(),
+            defaults={'category': 'other'}
+          )
+          
+          # Create recipe ingredient
+          recipe.ingredients.create(
+            ingredient=ingredient,
+            amount=ingredient_amounts[i] if ingredient_amounts[i] else 1,
+            unit=ingredient_units[i] if ingredient_units[i] else 'piece',
+            notes=ingredient_notes[i] if i < len(ingredient_notes) else ''
+          )
+      
+      # Handle steps from POST data
+      step_instructions = request.POST.getlist('step_instruction[]')
+      step_times = request.POST.getlist('step_time[]')
+      
+      for i in range(len(step_instructions)):
+        if step_instructions[i]:
+          recipe.steps.create(
+            order=i+1,
+            instruction=step_instructions[i],
+            time_minutes=step_times[i] if i < len(step_times) and step_times[i] else None
+          )
+      
+      messages.success(request, 'Recipe created successfully!')
+      return redirect('recipe_detail', recipe_id=recipe.id)
+  else:
+    form = AddRecipeForm()
+  
+  return render(request, 'add_recipe.html', {'form': form})
+
+
+@login_required(login_url='login')
+def edit_recipe(request, recipe_id):
+  """Edit an existing recipe"""
+  recipe = get_object_or_404(Recipe, id=recipe_id, created_by=request.user)
+  
+  if request.method == 'POST':
+    form = AddRecipeForm(request.POST, request.FILES, instance=recipe)
+    if form.is_valid():
+      form.save()
+      messages.success(request, 'Recipe updated successfully!')
+      return redirect('recipe_detail', recipe_id=recipe.id)
+  else:
+    form = AddRecipeForm(instance=recipe)
+  
+  return render(request, 'edit_recipe.html', {'form': form, 'recipe': recipe})
+
+
+# ============ COMMENTS & LIKES ============
+
+@login_required(login_url='login')
+def add_comment(request, recipe_id):
+  """Add a comment to a recipe"""
+  recipe = get_object_or_404(Recipe, id=recipe_id)
+  
+  if request.method == 'POST':
+    form = CommentForm(request.POST)
+    if form.is_valid():
+      comment = form.save(commit=False)
+      comment.recipe = recipe
+      comment.user = request.user
+      comment.save()
+      messages.success(request, 'Comment added!')
+  
+  return redirect('recipe_detail', recipe_id=recipe_id)
+
+
+@login_required(login_url='login')
+def toggle_like(request, recipe_id):
+  """Toggle like status for a recipe (AJAX)"""
+  recipe = get_object_or_404(Recipe, id=recipe_id)
+  
+  like, created = Like.objects.get_or_create(user=request.user, recipe=recipe)
+  
+  if not created:
+    like.delete()
+    is_liked = False
+    message = 'Like removed'
+  else:
+    is_liked = True
+    message = 'Recipe liked'
+  
+  likes_count = recipe.likes.count()
+  
+  return JsonResponse({
+    'is_liked': is_liked,
+    'likes_count': likes_count,
+    'message': message
+  })
